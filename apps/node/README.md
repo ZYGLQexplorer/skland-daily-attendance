@@ -27,7 +27,7 @@ Node.js 环境运行的森空岛自动签到服务，可以使用 Github Action 
 
 ### 消息推送
 
-自行设置 `SERVERCHAN_SENDKEY`, `BARK_URL`, `MESSAGE_PUSHER_URL` 的 secret，值为对应的服务推送需要的 url 或者密钥。
+自行设置 `NOTIFICATION_URLS` 的 secret值为 [statocysts](https://github.com/octoplorer/statocysts) 支持的 URL 语法，可以填写多个，使用半角逗号`,`分割。
 
 ### 错误重试
 
