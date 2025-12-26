@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@skland-x/core": "workspace:*",
+    "skland-kit": "catalog:lib",
     "statocysts": "^0.9.1",
     "tsx": "^4.21.0"
   },

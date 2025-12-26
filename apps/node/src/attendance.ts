@@ -1,7 +1,9 @@
 import process from 'node:process'
 import { setTimeout } from 'node:timers/promises'
-import { attendance, auth, getBinding, signIn } from '@skland-x/core'
+import { createClient } from 'skland-kit'
 import { createSender } from 'statocysts'
+
+const client = createClient()
 
 interface Options {
   notificationUrls?: string | string[]
@@ -39,9 +41,11 @@ function createCombinePushMessage(options: Options) {
 }
 
 export async function doAttendanceForAccount(token: string, options: Options) {
-  const { code } = await auth(token)
-  const { cred, token: signToken } = await signIn(code)
-  const { list } = await getBinding(cred, signToken)
+  const { code } = await client.collections.hypergryph.grantAuthorizeCode(token)
+
+  await client.signIn(code)
+
+  const { list } = await client.collections.player.getBinding()
 
   const [combineMessage, excutePushMessage, addMessage] = createCombinePushMessage(options)
 
@@ -56,22 +60,22 @@ export async function doAttendanceForAccount(token: string, options: Options) {
     let retries = 0 // 初始化重试计数器
     while (retries < maxRetries) {
       try {
-        const data = await attendance(cred, signToken, {
+        const query = {
           uid: character.uid,
           gameId: character.channelMasterId,
-        })
-        if (data) {
-          if (data.code === 0 && data.message === 'OK') {
-            const msg = `${(Number(character.channelMasterId) - 1) ? 'B 服' : '官服'}角色 ${successAttendance + 1} 签到成功${`, 获得了${data.data.awards.map(a => `「${a.resource.name}」${a.count}个`).join(',')}`}`
-            combineMessage(msg)
-            successAttendance++
-            break // 签到成功，跳出重试循环
-          }
-          else {
-            const msg = `${(Number(character.channelMasterId) - 1) ? 'B 服' : '官服'}角色 ${successAttendance + 1} 签到失败${`, 错误消息: ${data.message}\n\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``}`
-            combineMessage(msg, true)
-            retries++ // 签到失败，增加重试计数器
-          }
+        }
+        const attendanceStatus = await client.collections.game.getAttendanceStatus(query)
+
+
+        if (attendanceStatus) {
+
+          const data = await client.collections.game.attendance(query)
+
+          const msg = `${(Number(character.channelMasterId) - 1) ? 'B 服' : '官服'}角色 ${successAttendance + 1} 签到成功${`, 获得了${data.awards.map(a => `「${a.resource.name}」${a.count}个`).join(',')}`}`
+          combineMessage(msg)
+          successAttendance++
+          break // 签到成功，跳出重试循环
+
         }
         else {
           combineMessage(`${(Number(character.channelMasterId) - 1) ? 'B 服' : '官服'}角色 ${successAttendance + 1} 今天已经签到过了`)

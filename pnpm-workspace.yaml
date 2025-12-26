@@ -1,3 +1,7 @@
 packages:
   - packages/*
   - apps/*
+
+catalogs:
+  lib:
+    skland-kit: ^0.1.5

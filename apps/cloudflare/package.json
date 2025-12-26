@@ -18,6 +18,7 @@
     "@skland-x/core": "workspace:*",
     "date-fns": "^4.1.0",
     "defu": "^6.1.4",
+    "skland-kit": "catalog:lib",
     "unctx": "^2.5.0",
     "unstorage": "^1.17.3"
   },
