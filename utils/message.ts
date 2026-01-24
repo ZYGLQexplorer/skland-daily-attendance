@@ -1,11 +1,6 @@
-import { createSender } from 'statocysts'
-
-export function toArray<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [value]
-}
-
 export interface CreateMessageCollectorOptions {
-  notificationUrls?: string | string[]
+  webhookUrl?: string
+  webhookBody?: string
   onError?: () => void
 }
 
@@ -57,16 +52,33 @@ export function createMessageCollector(options: CreateMessageCollectorOptions): 
   }
 
   const push = async () => {
+    const { webhookUrl, webhookBody } = options
+
+    if (!webhookUrl || !webhookBody) {
+      return
+    }
+
     const title = '【森空岛每日签到】'
     const content = messages.join('\n\n')
-    const urls = options.notificationUrls ? toArray(options.notificationUrls) : []
-    const sender = createSender(urls)
+    const fullMessage = `${title}\n\n${content}`
+    const escapedMessage = JSON.stringify(fullMessage).slice(1, -1)
+    const body = webhookBody.replace('{message}', escapedMessage)
 
-    await sender.send(title, content)
-
-    // Exit with error if any error occurred
-    if (hasError && options.onError) {
-      options.onError()
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body,
+      })
+    }
+    catch (e) {
+      console.error('Webhook push failed', e)
+      // Exit with error if any error occurred
+      if (hasError && options.onError) {
+        options.onError()
+      }
     }
   }
 
