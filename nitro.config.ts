@@ -10,7 +10,8 @@ export default defineConfig({
   },
   runtimeConfig: {
     tokens: '',
-    notificationUrls: '',
+    webhookUrl: '',
+    webhookBody: '',
     maxRetries: '3',
     nitro: {
       envPrefix: 'SKLAND_',
