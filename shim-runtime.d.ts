@@ -1,7 +1,8 @@
 declare module 'nitro/types' {
   interface NitroRuntimeConfig {
     tokens: string
-    notificationUrls: string
+    webhookUrl: string
+    webhookBody: string
     maxRetries: string
   }
 }
