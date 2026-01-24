@@ -123,10 +123,9 @@ export default defineTask<'success' | 'failed'>({
 
     const tokens = getSplitByComma(config.tokens)
 
-    const notificationUrls = getSplitByComma(config.notificationUrls)
-
     const messageCollector = createMessageCollector({
-      notificationUrls,
+      webhookUrl: config.webhookUrl,
+      webhookBody: config.webhookBody,
     })
 
     if (tokens.length === 0) {
