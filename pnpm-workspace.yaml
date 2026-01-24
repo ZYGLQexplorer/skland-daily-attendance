@@ -17,7 +17,6 @@ catalogs:
     wait-on: ^9.0.3
   lib:
     skland-kit: ^0.1.6
-    statocysts: ^0.9.1
     unctx: ^2.5.0
     unstorage: ^2.0.0-alpha.5
   types:
