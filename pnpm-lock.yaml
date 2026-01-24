@@ -32,9 +32,6 @@ catalogs:
     skland-kit:
       specifier: ^0.1.6
       version: 0.1.6
-    statocysts:
-      specifier: ^0.9.1
-      version: 0.9.1
     unctx:
       specifier: ^2.5.0
       version: 2.5.0
@@ -53,9 +50,6 @@ importers:
       skland-kit:
         specifier: catalog:lib
         version: 0.1.6(db0@0.3.4)
-      statocysts:
-        specifier: catalog:lib
-        version: 0.9.1(typescript@5.9.3)
       unctx:
         specifier: catalog:lib
         version: 2.5.0
@@ -1853,10 +1847,6 @@ packages:
     resolution: {integrity: sha512-RZaxTKJEE/14HYn8COLuUOJAt0U55N9l1Xf6jj+T0GoA01EUH1Xz5JtSUOI+EHn+AEgPCVn7gk6jHJffrr06fQ==}
     engines: {node: '>=20.16.0'}
     hasBin: true
-
-  statocysts@0.9.1:
-    resolution: {integrity: sha512-IRSK6h3ztHnSe4FOkYMLF0FNk+8tdOb8WThmKK7+tHs3lwp5GPXFn0fHQ2uuPv0fCpxRXztzkzD18cMqHVz93w==}
-    engines: {node: '>=24.12.0'}
 
   strip-indent@4.1.1:
     resolution: {integrity: sha512-SlyRoSkdh1dYP0PzclLE7r0M9sgbFKKMFXpFRUMNuKhQSbC6VQIGzq3E0qsfvGJaUFJPGv6Ws1NZ/haTAjfbMA==}
@@ -4078,17 +4068,6 @@ snapshots:
   spdx-license-ids@3.0.22: {}
 
   srvx@0.9.8: {}
-
-  statocysts@0.9.1(typescript@5.9.3):
-    dependencies:
-      add: 2.0.6
-      defu: 6.1.4
-      emailjs: 5.0.0(typescript@5.9.3)
-      ofetch: 1.5.1
-      ufo: 1.6.1
-      zod: 4.2.1
-    transitivePeerDependencies:
-      - typescript
 
   strip-indent@4.1.1: {}
 
