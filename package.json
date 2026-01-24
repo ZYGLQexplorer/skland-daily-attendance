@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "skland-kit": "catalog:lib",
-    "statocysts": "catalog:lib",
     "unctx": "catalog:lib",
     "unstorage": "catalog:lib"
   },
