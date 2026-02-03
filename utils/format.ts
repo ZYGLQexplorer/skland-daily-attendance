@@ -36,10 +36,5 @@ export function formatPrivacyName(character: AppBindingPlayer) {
 }
 
 function maskNickname(name: string) {
-  if (name.length <= 1)
-    return '*'
-
-  const firstChar = name[0]
-  const stars = '*'.repeat(name.length - 1)
-  return `${firstChar}${stars}`
+  return `${name}`
 }

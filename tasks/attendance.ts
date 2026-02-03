@@ -159,7 +159,7 @@ export default defineTask<'success' | 'failed'>({
 
     const storage = useStorage()
 
-    messageCollector.notify('## 森空岛每日签到')
+    messageCollector.notify('森空岛每日签到')
 
     const maxRetries = Number(config.maxRetries)
 
@@ -209,29 +209,6 @@ export default defineTask<'success' | 'failed'>({
         }
       }
     })
-
-    // Output execution summary
-    messageCollector.notify(`\n========== 执行摘要 ==========`)
-    messageCollector.notify(`账号统计:`)
-    messageCollector.notify(`  • 总数: ${stats.accounts.total}`)
-    messageCollector.notify(`  • 成功: ${stats.accounts.successful}`)
-    messageCollector.notify(`  • 跳过: ${stats.accounts.skipped}`)
-    if (stats.accounts.failed > 0) {
-      messageCollector.notifyError(`  • 失败: ${stats.accounts.failed} (账号 #${stats.accounts.failedIndexes.join(', #')})`)
-    }
-
-    // Output game-specific statistics
-    if (stats.charactersByGame.size > 0) {
-      for (const gameStats of stats.charactersByGame.values()) {
-        messageCollector.notify(`\n【${gameStats.gameName}】角色统计:`)
-        messageCollector.notify(`  • 总数: ${gameStats.total}`)
-        messageCollector.notify(`  • 本次签到成功: ${gameStats.succeeded}`)
-        messageCollector.notify(`  • 今天已签到: ${gameStats.alreadyAttended}`)
-        if (gameStats.failed > 0) {
-          messageCollector.notifyError(`  • 签到失败: ${gameStats.failed}`)
-        }
-      }
-    }
 
     if (stats.accounts.successful > 0 || stats.accounts.failed > 0)
       await messageCollector.push()
