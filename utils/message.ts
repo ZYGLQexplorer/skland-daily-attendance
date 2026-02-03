@@ -1,11 +1,10 @@
-import { createSender } from 'statocysts'
-
 export function toArray<T>(value: T | T[]): T[] {
   return Array.isArray(value) ? value : [value]
 }
 
 export interface CreateMessageCollectorOptions {
-  notificationUrls?: string | string[]
+  webhookUrl?: string
+  webhookBody?: string
   onError?: () => void
 }
 
@@ -73,28 +72,69 @@ export function createMessageCollector(options: CreateMessageCollectorOptions): 
   /** @deprecated Use notify(), info(), or notifyError() instead */
   const collect = (message: string, opts: CollectOptions = {}) => {
     const { output = false, isError = false } = opts
-
-    // Add to notification messages
     messages.push(message)
-
-    // Output to console if requested
     if (output) {
       console[isError ? 'error' : 'log'](message)
     }
-
-    // Mark as error if needed
     if (isError) {
       hasError = true
     }
   }
 
   const push = async () => {
-    const title = '【森空岛每日签到】'
     const content = messages.join('\n\n')
-    const urls = options.notificationUrls ? toArray(options.notificationUrls) : []
-    const sender = createSender(urls)
+    const webhookUrl = options.webhookUrl
+    const webhookBodyTemplate = options.webhookBody || '{"msg_type":"text","content":{"text":"{message}"}}'
 
-    await sender.send(title, content)
+    if (webhookUrl) {
+      try {
+        let body: any
+        try {
+          // Attempt to parse as JSON first
+          body = JSON.parse(webhookBodyTemplate)
+
+          // Helper to recursively replace {message} in an object
+          const replacePlaceholder = (obj: any): any => {
+            if (typeof obj === 'string') {
+              return obj.split('{message}').join(content)
+            }
+            if (Array.isArray(obj)) {
+              return obj.map(replacePlaceholder)
+            }
+            if (obj !== null && typeof obj === 'object') {
+              const newObj: any = {}
+              for (const key in obj) {
+                newObj[key] = replacePlaceholder(obj[key])
+              }
+              return newObj
+            }
+            return obj
+          }
+
+          body = replacePlaceholder(body)
+          body = JSON.stringify(body)
+        } catch {
+          // Fallback to simple string replacement if not valid JSON
+          body = webhookBodyTemplate.split('{message}').join(content)
+        }
+
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: typeof body === 'string' ? body : JSON.stringify(body),
+        })
+
+        if (!response.ok) {
+          console.error(`🔴 Webhook 推送失败: ${response.status} ${response.statusText}`)
+        } else {
+          console.log('🟢 Webhook 推送成功')
+        }
+      } catch (error) {
+        console.error('🔴 Webhook 推送过程出错:', error)
+      }
+    }
 
     // Exit with error if any error occurred
     if (hasError && options.onError) {

@@ -54,9 +54,10 @@ const ATTENDANCE_AVAILABLE_APPCODE = ['arknights', 'endfield']
 async function processAccount(
   token: string,
   accountNumber: number,
+  ctx: AttendanceContext,
 ): Promise<ProcessAccountResult> {
   // Get all dependencies from context
-  const { stats, messageCollector, storage, maxRetries, totalAccounts } = useAttendanceContext()
+  const { stats, messageCollector, storage, maxRetries, totalAccounts } = ctx;
   // Check if already attended today
   const attendanceKey = await generateAttendanceKey(token)
   const hasAttended = await storage.getItem(attendanceKey)
@@ -146,10 +147,9 @@ export default defineTask<'success' | 'failed'>({
 
     const tokens = getSplitByComma(config.tokens)
 
-    const notificationUrls = getSplitByComma(config.notificationUrls)
-
     const messageCollector = createMessageCollector({
-      notificationUrls,
+      webhookUrl: config.webhookUrl as string,
+      webhookBody: config.webhookBody as string,
     })
 
     if (tokens.length === 0) {
@@ -192,14 +192,14 @@ export default defineTask<'success' | 'failed'>({
         const accountNumber = index + 1
 
         try {
-          const result = await processAccount(token, accountNumber)
+          const result = await processAccount(token, accountNumber, ctx)
 
           if (result.accountHasError) {
             hasFailed = true
           }
         }
         catch (error) {
-          const { stats, messageCollector } = useAttendanceContext()
+          const { stats, messageCollector } = ctx
           const errorMessage = error instanceof Error ? error.message : String(error)
           messageCollector.notify(`\n--- 账号 ${accountNumber}/${tokens.length} ---`)
           messageCollector.infoError(`处理失败: ${errorMessage}`)

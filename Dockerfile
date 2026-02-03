@@ -9,37 +9,32 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Install dependencies (only production if possible, but Nitro needs dev deps for build)
+# Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Build the application
+# Build step (optional if using tsx, but good for type checking)
 RUN pnpm run build
 
 # Production stage
 FROM node:24-alpine
 
-# Set non-root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
 WORKDIR /app
 
-# Copy built application from builder stage
-COPY --from=builder /app/.output /app/.output
+# Copy necessary files
+COPY --from=builder /app /app
 
-# Create data directories and set permissions
-RUN mkdir -p /app/.data/kv && chown -R appuser:appgroup /app
+# Install production dependencies only (optional, can just use the builder state)
+# RUN pnpm install --prod --frozen-lockfile
 
-# Expose port (Nitro defaults to 3000)
-EXPOSE 3000
+# Create data directories
+RUN mkdir -p /app/.cache && mkdir -p /app/.data/kv
 
 # Set environment variables
 ENV NODE_ENV=production
 
-# Switch to non-root user
-USER appuser
-
 # Start the application
-CMD ["node", ".output/server/index.mjs"]
+# We use tsx to run main.ts directly to stay close to source and keep it simple
+CMD ["npx", "tsx", "main.ts"]

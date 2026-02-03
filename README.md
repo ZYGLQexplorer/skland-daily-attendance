@@ -2,7 +2,7 @@
 
 使用 TypeScript 实现的森空岛自动签到服务，支持多账号管理和多种推送通知方式。
 
-基于 Nitro 构建，支持 Node.js、Cloudflare Workers 等环境部署。
+基于 Node.js 实现，支持多种环境部署。
 
 ## 功能特点
 
@@ -15,7 +15,7 @@
 
 ## 快速开始
 
-基于 Nitro 构建，使用 Scheduled Tasks 实现定时任务来签到，查看 [Nitro 文档](https://nitro.build/guide/tasks#platform-support) 了解支持的平台。
+项目使用简单的计划任务逻辑实现定时签到，支持 GitHub Actions、Docker 等多种平台部署。
 
 ### Cloudflare Workers 部署
 
@@ -199,8 +199,8 @@ docker run -d \
 
 - 默认使用本地文件存储，数据会持久化到 `./data` 目录
 - 如果需要使用 Redis 持久化，可以取消注释 `docker-compose.yml` 中的 Redis 服务配置
-- 容器会按照 `nitro.config.ts` 中配置的定时任务自动执行签到（默认每 2 小时执行一次）
-- 如需调整定时任务频率，请修改 `nitro.config.ts` 中的 `scheduledTasks` 配置后重新构建镜像
+- 容器会按照 Docker 内部逻辑自动执行签到（默认运行即签到，或配合 Cron 使用）
+- 如需调整定时任务频率，建议配合外部 Cron 或修改 `main.ts` 逻辑。
 
 </details>
 

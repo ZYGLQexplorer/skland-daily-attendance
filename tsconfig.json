@@ -1,8 +1,40 @@
 {
-  "extends": ["nitro/tsconfig"],
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "paths": {
-      "~/*": ["./*"]
+      "nitro": [
+        "utils/nitro-shim.ts"
+      ],
+      "nitro/runtime-config": [
+        "utils/nitro-shim.ts"
+      ],
+      "nitro/storage": [
+        "utils/nitro-shim.ts"
+      ],
+      "nitro/task": [
+        "utils/nitro-shim.ts"
+      ],
+      "nitro/h3": [
+        "utils/nitro-shim.ts"
+      ],
+      "~/*": [
+        "./*"
+      ]
     }
-  }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".output"
+  ]
 }
